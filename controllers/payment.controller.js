@@ -1,8 +1,8 @@
 import Stripe from "stripe";
 import Order from "../models/order.model.js";
 import { ERROR, SUCCESS } from "../config/statusText.js";
-import {config} from 'dotenv'
-config()
+import { config } from "dotenv";
+config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createCheckoutSession = async (req, res) => {

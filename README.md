@@ -53,9 +53,8 @@ A full-featured E-commerce REST API built with modern technologies and best prac
    ```
 
 The application will be available at:
-- API: http://localhost:5000
-- API Documentation: http://localhost:5000/api-docs
-- MongoDB Admin: http://localhost:8081
+- API: http://localhost:9090
+- API Documentation: http://localhost:9090/api-docs
 
 ### Local Development
 
@@ -133,4 +132,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📞 Support
 
-For support, email support@e-commerce-api.com or create an issue in the repository.
+For support, email alaaadelnn120@gmail.com or create an issue in the repository.
