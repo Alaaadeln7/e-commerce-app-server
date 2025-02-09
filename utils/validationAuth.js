@@ -1,5 +1,7 @@
-import * as yup from "yup";
-export const signUpvalidationSchema = yup.object({
+import * as yup from 'yup';
+import { ROLES } from '../config/constants.js';
+
+export const signUpValidationSchema = yup.object({
   fullName: yup
     .string()
     .required("Name is required")
@@ -15,6 +17,7 @@ export const signUpvalidationSchema = yup.object({
     .matches(/[a-z]/, "Password must contain a lowercase letter")
     .matches(/[A-Z]/, "Password must contain an uppercase letter")
     .matches(/\d/, "Password must contain a number"),
+  role: yup.string().required("Role is required").oneOf(Object.values(ROLES), "Invalid role")
 });
 export const loginValidationSchema = yup.object({
   email: yup

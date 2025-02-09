@@ -19,15 +19,14 @@ const userSchema = new mongoose.Schema(
       default: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/v1735715517/avatars/default-avatar.png.jpg`,
       required: false,
     },
+    role: { type: String, enum: ["customer", "seller", "admin"], default: "customer" },
+    logo: String,
+    sellerRequestStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: null }
   },
-
   { timestamps: true }
 );
-
-
-userSchema.set("toObject", { virtuals: true });
-userSchema.set("toJSON", { virtuals: true });
-
 const User = mongoose.model("User", userSchema);
 
 export default User;
+
+

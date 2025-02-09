@@ -1,12 +1,10 @@
 import express from "express";
 import {
   checkAuth,
-  createWorkExperience,
-  getAllUsers,
   login,
   logout,
   register,
-  update,
+  updateCredentials,
   updateProfile,
 } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
@@ -18,7 +16,6 @@ router.post("/login", login);
 router.post("/logout", logout);
 router.put("/update-profile", protectRoute, updateProfile);
 router.get("/check", protectRoute, checkAuth);
-router.put("/update", protectRoute, update);
-router.put("/createWorkExperience", protectRoute, createWorkExperience);
-router.get("/getAllUsers", protectRoute, getAllUsers);
+router.put("/update", protectRoute, updateCredentials);
+
 export default router;
