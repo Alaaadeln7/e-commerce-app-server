@@ -5,6 +5,7 @@ import {
   getAllProducts,
   getProductById,
   updateProduct,
+  getBestSellers,
 } from "../controllers/product.controller.js";
 import validateProduct from "../utils/productValidator.js";
 import { protectRoute ,isSeller} from "../middlewares/auth.middleware.js";
@@ -14,4 +15,5 @@ router.delete("/delete/:productId", protectRoute,isSeller,deleteProduct);
 router.put("/update/:productId", protectRoute,isSeller,validateProduct,updateProduct);
 router.get("/:productId",getProductById);
 router.get("/",getAllProducts);
+router.get("/bestSellers", getBestSellers);
 export default router;

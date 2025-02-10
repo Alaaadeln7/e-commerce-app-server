@@ -1,6 +1,8 @@
 import Discount from "../models/discount.model.js";
 import { SUCCESS, ERROR } from "../config/statusText.js";
-export const createDiscount = async (req, res) => {
+import { asyncHandler } from "../middlewares/error.middleware.js";
+
+export const createDiscount = asyncHandler(async (req, res) => {
   try {
     const { code, discountPercentage, expiryDate } = req.body;
 
@@ -21,9 +23,9 @@ export const createDiscount = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ status: ERROR, message: "An error occurred while creating discount code", error: error.message });
   }
-};
+});
 
-export const validateDiscount = async (req, res) => {
+export const validateDiscount = asyncHandler(async (req, res) => {
   try {
     const { code } = req.body;
     const userId = req.user.id;
@@ -45,9 +47,9 @@ export const validateDiscount = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "An error occurred while validating discount code", error: error.message });
   }
-};
+});
 
-export const useDiscount = async (req, res) => {
+export const useDiscount = asyncHandler(async (req, res) => {
   try {
     const { code } = req.body;
     const userId = req.user.id;
@@ -71,9 +73,9 @@ export const useDiscount = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ status: ERROR, message: "An error occurred while using discount code", error: error.message });
   }
-};
+});
 
-export const deleteDiscount = async (req, res) => {
+export const deleteDiscount = asyncHandler(async (req, res) => {
   try {
     const { discountId } = req.params;
     const deletedDiscount = await Discount.findByIdAndDelete(discountId);
@@ -86,9 +88,9 @@ export const deleteDiscount = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ status: ERROR, message: "An error occurred while deleting discount code", error: error.message });
   }
-};
+});
 
-export const getAllDiscounts = async (req, res) => {
+export const getAllDiscounts = asyncHandler(async (req, res) => {
   try {
     const discounts = await Discount.find();
     if(!discounts){
@@ -99,4 +101,4 @@ export const getAllDiscounts = async (req, res) => {
     console
     res.status(500).json({ status: ERROR, message: "An error occurred while getting all discount codes", error: error.message });
   }
-};
+});

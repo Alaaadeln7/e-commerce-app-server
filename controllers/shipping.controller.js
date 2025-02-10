@@ -1,7 +1,8 @@
 import Order from "../models/order.model.js";
 import { FAILED, SUCCESS } from "../config/statusText.js";
+import { asyncHandler } from "../middlewares/error.middleware.js";
 
-export const markAsShipped = async (req, res) => {
+export const markAsShipped = asyncHandler(async (req, res) => {
   const { orderId, carrier, trackingNumber, estimatedDeliveryDate } = req.body;
 
   try {
@@ -22,9 +23,9 @@ export const markAsShipped = async (req, res) => {
   } catch (error) {
     res.status(500).json({ status: FAILED, message: "Error updating order status", error });
   }
-};
+});
 
-export const markAsDelivered = async (req, res) => {
+export const markAsDelivered = asyncHandler(async (req, res) => {
   const { orderId } = req.body;
 
   try {
@@ -45,4 +46,4 @@ export const markAsDelivered = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ status: FAILED, message: "Error updating order status", error });
   }
-};
+});

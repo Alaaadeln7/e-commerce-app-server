@@ -1,15 +1,22 @@
 import Review from "../models/review.model.js";
 import Product from "../models/product.model.js";
 import { ERROR, SUCCESS } from "../config/statusText.js";
+import { asyncHandler } from "../middlewares/error.middleware.js";
 
-export const addReview = async (req, res) => {
+const calculateAverageRating = async (productId) => {
+  const reviews = await Review.find({ product: productId });
+  const totalRatings = reviews.reduce((acc, review) => acc + review.rating, 0);
+  return reviews.length > 0 ? totalRatings / reviews.length : 0;
+};
+
+export const addReview = asyncHandler(async (req, res) => {
   try {
     const { productId, rating, reviewText } = req.body;
-    const userId  = req.user?.id;
+    const userId = req.user?.id;
 
     const existingReview = await Review.findOne({ product: productId, user: userId });
     if (existingReview) {
-      return res.status(400).json({ message: "You have already reviewed this product" });
+      return res.status(400).json({ status: ERROR, message: "You have already reviewed this product" });
     }
 
     const newReview = new Review({
@@ -21,24 +28,16 @@ export const addReview = async (req, res) => {
     await newReview.save();
 
     const product = await Product.findById(productId);
-    product.averageRating = await calculateAverageRating(productId); // function to calculate average rating
+    product.averageRating = await calculateAverageRating(productId); 
     await product.save();
 
-    res.status(201).json({ message: "Review added successfully" });
+    res.status(201).json({ status: SUCCESS, message: "Review added successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Error adding review", error });
+    res.status(500).json({ status: ERROR, message: "Error adding review", error });
   }
-};
+});
 
-
-const calculateAverageRating = async (productId) => {
-  const reviews = await Review.find({ product: productId });
-  const totalRatings = reviews.reduce((acc, review) => acc + review.rating, 0);
-  return totalRatings / reviews.length;
-};
-
-
-export const getReviews = async (req, res) => {
+export const getReviews = asyncHandler(async (req, res) => {
   try {
     const { productId } = req.params;
     const reviews = await Review.find({ product: productId }).populate("user", "name email");
@@ -47,4 +46,4 @@ export const getReviews = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ status: ERROR, message: "Error fetching reviews", error });
   }
-};
+});

@@ -23,6 +23,7 @@ import paymentRoutes from "./routes/payment.routes.js";
 import shippingRoutes from "./routes/shipping.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import reviewRoutes from "./routes/review.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 
 
@@ -53,7 +54,7 @@ app.use(`${API_PREFIX}/payments`, paymentRoutes);
 app.use(`${API_PREFIX}/shipping`, shippingRoutes);
 app.use(`${API_PREFIX}/notifications`, notificationRoutes);
 app.use(`${API_PREFIX}/reviews`, reviewRoutes);
-
+app.use(`${API_PREFIX}/admins`, adminRoutes);
 
 app.use(errorHandler);
 

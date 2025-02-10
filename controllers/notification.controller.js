@@ -1,7 +1,8 @@
 import Notification from "../models/notification.model.js";
 import { SUCCESS, ERROR } from "../config/statusText.js";
+import { asyncHandler } from "../middlewares/error.middleware.js";
 
-export const getNotifications = async (req, res) => {
+export const getNotifications = asyncHandler(async (req, res) => {
   try {
     const userId = req.user?.id;
 
@@ -10,9 +11,9 @@ export const getNotifications = async (req, res) => {
   } catch (error) {
     res.status(500).json({ status: ERROR, message: "Error fetching notifications", error });
   }
-};
+});
 
-export const markAsRead = async (req, res) => {
+export const markAsRead = asyncHandler(async (req, res) => {
   try {
     const { notificationId } = req.body;
 
@@ -29,4 +30,4 @@ export const markAsRead = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ status: ERROR, message: "Error marking notification as read", error });
   }
-};
+});

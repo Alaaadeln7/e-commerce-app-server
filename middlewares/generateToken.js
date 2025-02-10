@@ -19,10 +19,8 @@ const generateToken = (userId, res) => {
       }
     );
 
-    // Set secure HTTP-only cookie
     res.cookie('jwt', token, COOKIE_OPTIONS);
 
-    // Return token for potential other uses (e.g., WebSocket authentication)
     return token;
   } catch (error) {
     console.error('Token generation error:', error);

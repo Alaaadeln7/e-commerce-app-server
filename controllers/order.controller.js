@@ -1,8 +1,9 @@
 import { ERROR, SUCCESS } from "../config/statusText.js";
+import { asyncHandler } from "../middlewares/error.middleware.js";
 import Cart from "../models/cart.model.js";
 import Order from "../models/order.model.js";
-
-export const createOrder = async (req, res) => {
+import Product from "../models/product.model.js";
+export const createOrder = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   const { address, paymentStatus } = req.body;
   try {
@@ -32,17 +33,17 @@ export const createOrder = async (req, res) => {
       .status(500)
       .json({ status: ERROR, message: "Internal Server Error" });
   }
-};
-export const getUserOrders = async (req, res) => {
+});
+export const getUserOrders = asyncHandler(async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user.id }).populate("items.product");
     res.status(200).json({ status: SUCCESS, data: orders });
   } catch (error) {
     res.status(500).json({ status: ERROR, message: "An error occurred", error: error.message });
   }
-};
+});
 
-export const getAllOrders = async (req, res) => {
+export const getAllOrders = asyncHandler(async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("user", "fullName email")
@@ -51,8 +52,8 @@ export const getAllOrders = async (req, res) => {
   } catch (error) {
     res.status(500).json({ status: ERROR, message: "An error occurred", error: error.message });
   }
-};
-export const updateOrderStatus = async (req, res) => {
+});
+export const updateOrderStatus = asyncHandler(async (req, res) => {
   try {
     const { orderId, status } = req.body;
     const userId = req.user?.id;
@@ -80,4 +81,21 @@ export const updateOrderStatus = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "An error occurred", error: error.message });
   }
-};
+});
+export const updateProductSales = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+  try{
+    const order = await Order.findById(orderId).populate("items.product");
+    if(!order){
+      return res.status(404).json({ message: "Order not found" });
+    }
+    for(const item of order.items){
+      await Product.findByIdAndUpdate(item.product, { 
+        $inc: { sold: item.quantity } 
+      });
+    }
+  }catch(error){
+    console.log(error.message);
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+}); 

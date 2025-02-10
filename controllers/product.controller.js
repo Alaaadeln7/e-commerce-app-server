@@ -1,7 +1,8 @@
 import { ERROR, SUCCESS } from "../config/statusText.js";
 import Product from "../models/product.model.js";
+import { asyncHandler } from "../middlewares/error.middleware.js";
 
-export const getAllProducts = async (req, res) => {
+export const getAllProducts = asyncHandler(async (req, res) => {
   try {
     const products = await Product.find();
     return res.status(200).json({ status: SUCCESS, data: products });
@@ -11,8 +12,9 @@ export const getAllProducts = async (req, res) => {
       .status(500)
       .json({ status: ERROR, message: "Internal Server Error" });
   }
-};
-export const getProductById = async (req, res) => {
+});
+
+export const getProductById = asyncHandler(async (req, res) => {
   const { productId } = req.params;
   try {
     const product = await Product.findById(productId);
@@ -27,13 +29,13 @@ export const getProductById = async (req, res) => {
       .status(500)
       .json({ status: ERROR, message: "Internal Server Error" });
   }
-};
-export const createProduct = async (req, res) => {
+});
+
+export const createProduct = asyncHandler(async (req, res) => {
   const {title, description, price, category, stock, discount, discountCode, thumbnail} = req.body;
   const user = req.user;
   try {
     if(user.role ===  "seller"){
-
       let thumbnailUrl = null;
       if (thumbnail) {
         const uploadResponse = await cloudinary.uploader.upload(thumbnail, {
@@ -58,8 +60,9 @@ export const createProduct = async (req, res) => {
       .status(500)
       .json({ status: ERROR, message: "Internal Server Error" });
   }
-};
-export const updateProduct = async (req, res) => {
+});
+
+export const updateProduct = asyncHandler(async (req, res) => {
   const { productId } = req.params;
   const updates = req.body;
   const user = req.user;
@@ -80,8 +83,9 @@ export const updateProduct = async (req, res) => {
       .status(500)
       .json({ status: ERROR, message: "Internal Server Error" });
   }
-};
-export const deleteProduct = async (req, res) => {
+});
+
+export const deleteProduct = asyncHandler(async (req, res) => {
   const { productId } = req.params;
   const user = req.user;
   try {
@@ -101,4 +105,16 @@ export const deleteProduct = async (req, res) => {
       .status(500)
       .json({ status: ERROR, message: "Internal Server Error" });
   }
-};
+});
+
+export const getBestSellers = asyncHandler(async (req, res) => {
+  try {
+    const products = await Product.find().sort({ sales: -1 }).limit(10);
+    return res.status(200).json({ status: SUCCESS, data: products });
+  } catch (error) {
+    console.log(error.message);
+    return res
+      .status(500)
+      .json({ status: ERROR, message: "Internal Server Error" });
+  }
+});

@@ -12,6 +12,7 @@ const productSchema = new mongoose.Schema(
     images: { type: [String], required: false },
     seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     thumbnail: { type: String, required: true },
+    sold: { type: Number, default: 0 },
   }, { timestamps: true }
 );
 

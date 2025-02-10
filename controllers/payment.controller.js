@@ -2,10 +2,12 @@ import Stripe from "stripe";
 import Order from "../models/order.model.js";
 import { ERROR, SUCCESS } from "../config/statusText.js";
 import { config } from "dotenv";
+import { asyncHandler } from "../middlewares/error.middleware.js";
+
 config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-export const createCheckoutSession = async (req, res) => {
+export const createCheckoutSession = asyncHandler(async (req, res) => {
   const { orderId } = req.body;
   try {
     const order = await Order.findById(orderId).populate("items.product");
@@ -34,9 +36,9 @@ export const createCheckoutSession = async (req, res) => {
   } catch (error) {
     res.status(500).json({ status: ERROR, message: "Error creating checkout session", error });
   }
-};
+});
 
-export const handlePaymentSuccess = async (req, res) => {
+export const handlePaymentSuccess = asyncHandler(async (req, res) => {
   try {
     const { orderId } = req.body;
     const order = await Order.findById(orderId);
@@ -52,4 +54,4 @@ export const handlePaymentSuccess = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ status: ERROR, message: "Error updating order status", error });
   }
-};
+});
