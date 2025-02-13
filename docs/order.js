@@ -17,7 +17,7 @@
  *         price:
  *           type: number
  *           description: The price of the product at the time of order
- * 
+ *
  *     Order:
  *       type: object
  *       required:
@@ -113,7 +113,7 @@
  *         description: Invalid request data
  *       401:
  *         description: Not authorized
- * 
+ *
  *   get:
  *     summary: Get orders for the authenticated user
  *     security:
@@ -130,7 +130,7 @@
  *                 $ref: '#/components/schemas/Order'
  *       401:
  *         description: Not authorized
- * 
+ *
  * /orders/all:
  *   get:
  *     summary: Get all orders (Admin only)
@@ -150,7 +150,7 @@
  *         description: Not authorized
  *       403:
  *         description: Admin access required
- * 
+ *
  * /orders/update:
  *   put:
  *     summary: Update order status (Admin only)

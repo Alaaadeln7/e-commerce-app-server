@@ -1,13 +1,13 @@
-import jwt from 'jsonwebtoken';
-import { AppError } from './error.middleware.js';
-import { asyncHandler } from './error.middleware.js';
-import User from '../models/user.model.js';
-import { ROLES } from '../config/constants.js';
+import jwt from "jsonwebtoken";
+import { AppError } from "./error.middleware.js";
+import { asyncHandler } from "./error.middleware.js";
+import User from "../models/user.model.js";
+import { ROLES } from "../config/constants.js";
 import { FAILED } from "../config/statusText.js";
 
 export const isAdmin = asyncHandler(async (req, res, next) => {
   if (req.user.role !== ROLES.ADMIN) {
-    throw new AppError('Admin access required', 403);
+    throw new AppError("Admin access required", 403);
   }
   // const admins = await Admin.find();
 
@@ -17,11 +17,10 @@ export const isAdmin = asyncHandler(async (req, res, next) => {
 
 export const isSeller = asyncHandler(async (req, res, next) => {
   if (req.user.role !== ROLES.SELLER) {
-    throw new AppError('Seller access required', 403);
+    throw new AppError("Seller access required", 403);
   }
   next();
 });
-
 
 export const protectRoute = async (req, res, next) => {
   try {

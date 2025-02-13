@@ -14,36 +14,59 @@ export const addReview = asyncHandler(async (req, res) => {
     const { productId, rating, reviewText } = req.body;
     const userId = req.user?.id;
 
-    const existingReview = await Review.findOne({ product: productId, user: userId });
+    const existingReview = await Review.findOne({
+      product: productId,
+      user: userId,
+    });
     if (existingReview) {
-      return res.status(400).json({ status: ERROR, message: "You have already reviewed this product" });
+      return res
+        .status(400)
+        .json({
+          status: ERROR,
+          message: "You have already reviewed this product",
+        });
     }
 
     const newReview = new Review({
       product: productId,
       user: userId,
       rating,
-      reviewText
+      reviewText,
     });
     await newReview.save();
 
     const product = await Product.findById(productId);
-    product.averageRating = await calculateAverageRating(productId); 
+    product.averageRating = await calculateAverageRating(productId);
     await product.save();
 
-    res.status(201).json({ status: SUCCESS, message: "Review added successfully" });
+    res
+      .status(201)
+      .json({ status: SUCCESS, message: "Review added successfully" });
   } catch (error) {
-    res.status(500).json({ status: ERROR, message: "Error adding review", error });
+    res
+      .status(500)
+      .json({ status: ERROR, message: "Error adding review", error });
   }
 });
 
 export const getReviews = asyncHandler(async (req, res) => {
   try {
     const { productId } = req.params;
-    const reviews = await Review.find({ product: productId }).populate("user", "name email");
-    res.status(200).json({ status: SUCCESS, message: "Reviews fetched successfully", data: reviews });
+    const reviews = await Review.find({ product: productId }).populate(
+      "user",
+      "name email"
+    );
+    res
+      .status(200)
+      .json({
+        status: SUCCESS,
+        message: "Reviews fetched successfully",
+        data: reviews,
+      });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ status: ERROR, message: "Error fetching reviews", error });
+    res
+      .status(500)
+      .json({ status: ERROR, message: "Error fetching reviews", error });
   }
 });

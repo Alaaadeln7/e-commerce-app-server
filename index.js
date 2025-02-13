@@ -6,7 +6,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
 import cookieParser from "cookie-parser";
-import swaggerUi from 'swagger-ui-express';
+import swaggerUi from "swagger-ui-express";
 import connectionDB from "./config/db.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { CORS_OPTIONS, RATE_LIMIT_OPTIONS } from "./config/constants.js";
@@ -25,25 +25,20 @@ import notificationRoutes from "./routes/notification.routes.js";
 import reviewRoutes from "./routes/review.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 
-
-
-app.use(helmet()); 
+app.use(helmet());
 app.use(cors(CORS_OPTIONS));
 app.use(rateLimit(RATE_LIMIT_OPTIONS));
-app.use(mongoSanitize()); 
-
+app.use(mongoSanitize());
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
-
 connectionDB();
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-const API_PREFIX = '/api';
+const API_PREFIX = "/api";
 app.use(`${API_PREFIX}/auth`, authRoutes);
 app.use(`${API_PREFIX}/products`, productRoutes);
 app.use(`${API_PREFIX}/sellers`, sellerRoutes);
@@ -58,16 +53,17 @@ app.use(`${API_PREFIX}/admins`, adminRoutes);
 
 app.use(errorHandler);
 
-
 app.use((req, res) => {
   res.status(404).json({
-    status: 'error',
-    message: 'Route not found'
+    status: "error",
+    message: "Route not found",
   });
 });
 
 const port = process.env.PORT || 8080;
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-  console.log(`API Documentation available at http://localhost:${port}/api-docs`);
+  console.log(
+    `API Documentation available at http://localhost:${port}/api-docs`
+  );
 });

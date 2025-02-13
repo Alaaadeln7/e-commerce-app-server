@@ -29,7 +29,7 @@
  *           type: string
  *           format: date-time
  *           description: The date and time when the payment was made
- * 
+ *
  *     CheckoutSession:
  *       type: object
  *       required:
@@ -48,7 +48,7 @@
  *           type: string
  *           enum: [pending, completed, failed]
  *           description: The status of the checkout session
- * 
+ *
  *     PaymentSuccess:
  *       type: object
  *       properties:
@@ -83,7 +83,7 @@
  *         description: Payment processed successfully
  *       400:
  *         description: Invalid payment details
- * 
+ *
  * /payments/{orderId}:
  *   get:
  *     summary: Get the payment details for a specific order
@@ -100,7 +100,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Payment'
- * 
+ *
  * /payments/create-checkout-session:
  *   post:
  *     summary: Create a new Stripe checkout session for an order
@@ -130,7 +130,7 @@
  *         description: Order not found
  *       500:
  *         description: Error creating checkout session
- * 
+ *
  * /payments/payment-success:
  *   post:
  *     summary: Handle successful payment webhook from Stripe

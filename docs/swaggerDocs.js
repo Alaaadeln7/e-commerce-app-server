@@ -1,11 +1,11 @@
-import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerJsdoc from "swagger-jsdoc";
 
 const options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: 'E-commerce API',
-      version: '1.0.0',
+      title: "E-commerce API",
+      version: "1.0.0",
       description: `
 A full-featured E-commerce REST API built with modern technologies and best practices.
 
@@ -75,62 +75,62 @@ A full-featured E-commerce REST API built with modern technologies and best prac
 This API follows REST principles and uses standard HTTP methods and status codes. All responses are in JSON format.
       `,
       contact: {
-        name: 'API Support',
-        email: 'support@e-commerce-api.com'
+        name: "API Support",
+        email: "support@e-commerce-api.com",
       },
       license: {
-        name: 'MIT',
-        url: 'https://opensource.org/licenses/MIT'
-      }
+        name: "MIT",
+        url: "https://opensource.org/licenses/MIT",
+      },
     },
     servers: [
       {
-        url: 'http://localhost:5000',
-        description: 'Development server'
-      }
+        url: "http://localhost:5000",
+        description: "Development server",
+      },
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT'
-        }
-      }
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
     },
     security: [
       {
-        bearerAuth: []
-      }
+        bearerAuth: [],
+      },
     ],
     tags: [
       {
-        name: 'Authentication',
-        description: 'User authentication and authorization endpoints'
+        name: "Authentication",
+        description: "User authentication and authorization endpoints",
       },
       {
-        name: 'Products',
-        description: 'Product management endpoints'
+        name: "Products",
+        description: "Product management endpoints",
       },
       {
-        name: 'Orders',
-        description: 'Order management endpoints'
+        name: "Orders",
+        description: "Order management endpoints",
       },
       {
-        name: 'Payments',
-        description: 'Payment processing endpoints'
+        name: "Payments",
+        description: "Payment processing endpoints",
       },
       {
-        name: 'Reviews',
-        description: 'Product review endpoints'
+        name: "Reviews",
+        description: "Product review endpoints",
       },
       {
-        name: 'Discounts',
-        description: 'Discount and coupon management endpoints'
-      }
-    ]
+        name: "Discounts",
+        description: "Discount and coupon management endpoints",
+      },
+    ],
   },
-  apis: ['./docs/**/*.js'],
+  apis: ["./docs/**/*.js"],
 };
 
 const swaggerSpec = swaggerJsdoc(options);

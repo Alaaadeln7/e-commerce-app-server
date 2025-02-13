@@ -1,5 +1,8 @@
 import express from "express";
-import { markAsShipped, markAsDelivered } from "../controllers/shipping.controller.js";
+import {
+  markAsShipped,
+  markAsDelivered,
+} from "../controllers/shipping.controller.js";
 
 const router = express.Router();
 

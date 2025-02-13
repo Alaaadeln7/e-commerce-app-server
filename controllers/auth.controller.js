@@ -28,18 +28,18 @@ export const register = asyncHandler(async (req, res) => {
   const { fullName, email, password, role } = req.body;
 
   if (!req.body) {
-    throw new AppError('No data provided', 400);
+    throw new AppError("No data provided", 400);
   }
 
   await signUpValidationSchema.validate(req.body, { abortEarly: false });
 
   const userExists = await User.findOne({ email });
   if (userExists) {
-    throw new AppError('User already exists', 400);
+    throw new AppError("User already exists", 400);
   }
 
   if (!validateRole(role)) {
-    throw new AppError('Invalid role', 400);
+    throw new AppError("Invalid role", 400);
   }
 
   const hashedPassword = await hashPassword(password);
@@ -47,14 +47,14 @@ export const register = asyncHandler(async (req, res) => {
     fullName,
     email,
     password: hashedPassword,
-    role
+    role,
   });
   const user = await User.findById(newUser._id).select("-password -__v");
   generateToken(user._id, res);
 
   res.status(201).json({
     status: SUCCESS,
-    data: user
+    data: user,
   });
 });
 
@@ -63,28 +63,28 @@ export const login = asyncHandler(async (req, res) => {
 
   await loginValidationSchema.validate(req.body, { abortEarly: false });
 
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select("+password");
   if (!user || !(await comparePasswords(password, user.password))) {
-    throw new AppError('Incorrect email or password', 401);
+    throw new AppError("Incorrect email or password", 401);
   }
   user.password = undefined;
 
   generateToken(user._id, res);
   res.status(200).json({
     status: SUCCESS,
-    data: { user }
+    data: { user },
   });
 });
 
 export const logout = asyncHandler(async (req, res) => {
-  res.cookie('jwt', '', {
+  res.cookie("jwt", "", {
     httpOnly: true,
-    expires: new Date(0)
+    expires: new Date(0),
   });
 
   res.status(200).json({
     status: SUCCESS,
-    message: 'Logged out successfully'
+    message: "Logged out successfully",
   });
 });
 
@@ -96,34 +96,36 @@ export const updateProfile = asyncHandler(async (req, res) => {
     {
       fullName,
       phoneNumber,
-      address
+      address,
     },
     {
       new: true,
-      runValidators: true
+      runValidators: true,
     }
-  ).select('-password -__v');
+  ).select("-password -__v");
 
   if (!updatedUser) {
-    throw new AppError('User not found', 404);
+    throw new AppError("User not found", 404);
   }
 
   res.status(200).json({
     status: SUCCESS,
-    data: updatedUser
+    data: updatedUser,
   });
 });
 
 export const updateCredentials = asyncHandler(async (req, res) => {
   const { email, currentPassword, newPassword } = req.body;
 
-
-  const user = await User.findById(req.user._id).select('+password');
+  const user = await User.findById(req.user._id).select("+password");
   if (!user) {
-    throw new AppError('User not found', 404);
+    throw new AppError("User not found", 404);
   }
-  if (currentPassword && !(await comparePasswords(currentPassword, user.password))) {
-    throw new AppError('Current password is incorrect', 401);
+  if (
+    currentPassword &&
+    !(await comparePasswords(currentPassword, user.password))
+  ) {
+    throw new AppError("Current password is incorrect", 401);
   }
 
   if (email) user.email = email;
@@ -135,18 +137,18 @@ export const updateCredentials = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     status: SUCCESS,
-    data: user
+    data: user,
   });
 });
 
 export const checkAuth = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).select('-password -__v');
+  const user = await User.findById(req.user._id).select("-password -__v");
   if (!user) {
-    throw new AppError('User not found', 404);
+    throw new AppError("User not found", 404);
   }
 
   res.status(200).json({
     status: SUCCESS,
-    data: user
+    data: user,
   });
 });

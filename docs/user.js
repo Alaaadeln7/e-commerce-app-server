@@ -57,7 +57,7 @@
  *           type: string
  *           format: date-time
  *           description: The date and time when the user account was last updated
- * 
+ *
  *     LoginResponse:
  *       type: object
  *       properties:
@@ -121,7 +121,7 @@
  *               $ref: '#/components/schemas/LoginResponse'
  *       400:
  *         description: Invalid input or email already exists
- * 
+ *
  * /auth/login:
  *   post:
  *     summary: Login a user
@@ -151,7 +151,7 @@
  *               $ref: '#/components/schemas/LoginResponse'
  *       401:
  *         description: Invalid credentials
- * 
+ *
  * /auth/logout:
  *   post:
  *     summary: Logout a user
@@ -159,7 +159,7 @@
  *     responses:
  *       200:
  *         description: Logout successful
- * 
+ *
  * /auth/update-profile:
  *   put:
  *     summary: Update user profile
@@ -201,7 +201,7 @@
  *               $ref: '#/components/schemas/User'
  *       401:
  *         description: Not authorized
- * 
+ *
  * /auth/check:
  *   get:
  *     summary: Check if user is authenticated
@@ -217,7 +217,7 @@
  *               $ref: '#/components/schemas/User'
  *       401:
  *         description: Not authorized
- * 
+ *
  * /auth/update:
  *   put:
  *     summary: Update user credentials

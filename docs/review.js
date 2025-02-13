@@ -80,7 +80,7 @@
  *         description: Not authorized
  *       404:
  *         description: Product not found
- * 
+ *
  * /reviews/{productId}:
  *   get:
  *     summary: Get all reviews for a specific product

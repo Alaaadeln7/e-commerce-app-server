@@ -1,7 +1,7 @@
 import { ERROR, SUCCESS } from "../config/statusText.js";
 import Product from "../models/product.model.js";
 import { asyncHandler } from "../middlewares/error.middleware.js";
-
+import cloudinary from "../config/cloudinary.js";
 export const getAllProducts = asyncHandler(async (req, res) => {
   try {
     const products = await Product.find();
@@ -21,7 +21,9 @@ export const getProductById = asyncHandler(async (req, res) => {
     if (product) {
       return res.status(200).json({ status: SUCCESS, data: product });
     } else {
-      return res.status(404).json({ status: ERROR, message: "Product not found" });
+      return res
+        .status(404)
+        .json({ status: ERROR, message: "Product not found" });
     }
   } catch (error) {
     console.error(error.message);
@@ -32,28 +34,36 @@ export const getProductById = asyncHandler(async (req, res) => {
 });
 
 export const createProduct = asyncHandler(async (req, res) => {
-  const {title, description, price, category, stock, discount, discountCode, thumbnail} = req.body;
+  const { title, description, price, category, stock, thumbnail } = req.body;
   const user = req.user;
   try {
-    if(user.role ===  "seller"){
+    if (user?.role === "seller") {
       let thumbnailUrl = null;
       if (thumbnail) {
         const uploadResponse = await cloudinary.uploader.upload(thumbnail, {
           folder: "products",
         });
         thumbnailUrl = uploadResponse.secure_url;
-      } 
+      }
 
       const newProduct = new Product({
-        title, description, price, category, stock, discount, discountCode, seller: user._id, thumbnail: thumbnailUrl
-      })
+        title,
+        description,
+        price,
+        category,
+        stock,
+        seller: user._id,
+        thumbnail: thumbnailUrl,
+      });
 
       await newProduct.save();
       return res.status(201).json({ status: SUCCESS, data: newProduct });
-    }else{
-      return res.status(403).json({ status: ERROR, message: "you must be a seller to create a product" });
+    } else {
+      return res.status(403).json({
+        status: ERROR,
+        message: "you must be a seller to create a product",
+      });
     }
-    
   } catch (error) {
     console.error(error.message);
     return res
@@ -68,14 +78,23 @@ export const updateProduct = asyncHandler(async (req, res) => {
   const user = req.user;
   try {
     const product = await Product.findById(productId);
-    if(!product){
-      return res.status(404).json({ status: ERROR, message: "Product not found" });
+    if (!product) {
+      return res
+        .status(404)
+        .json({ status: ERROR, message: "Product not found" });
     }
-    if(product.seller.toString() === user._id){
-      const updatedProduct = await Product.findByIdAndUpdate(productId, updates, {new: true});
+    if (product.seller.toString() === user._id) {
+      const updatedProduct = await Product.findByIdAndUpdate(
+        productId,
+        updates,
+        { new: true }
+      );
       return res.status(200).json({ status: SUCCESS, data: updatedProduct });
-    }else{
-      return res.status(403).json({ status: ERROR, message: "you must be the seller of this product to update it" });
+    } else {
+      return res.status(403).json({
+        status: ERROR,
+        message: "you must be the seller of this product to update it",
+      });
     }
   } catch (error) {
     console.log(error.message);
@@ -90,14 +109,21 @@ export const deleteProduct = asyncHandler(async (req, res) => {
   const user = req.user;
   try {
     const product = await Product.findById(productId);
-    if(!product){
-      return res.status(404).json({ status: ERROR, message: "Product not found" });
+    if (!product) {
+      return res
+        .status(404)
+        .json({ status: ERROR, message: "Product not found" });
     }
-    if(product.seller.toString() === user._id){
+    if (product.seller.toString() === user._id) {
       await Product.findByIdAndDelete(productId);
-      return res.status(200).json({ status: SUCCESS, message: "Product deleted" });
-    }else{
-      return res.status(403).json({ status: ERROR, message: "you must be the seller of this product to delete it" });
+      return res
+        .status(200)
+        .json({ status: SUCCESS, message: "Product deleted" });
+    } else {
+      return res.status(403).json({
+        status: ERROR,
+        message: "you must be the seller of this product to delete it",
+      });
     }
   } catch (error) {
     console.log(error.message);

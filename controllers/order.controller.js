@@ -11,7 +11,10 @@ export const createOrder = asyncHandler(async (req, res) => {
     if (!cart || cart.items.length === 0) {
       return res.status(404).json({ status: ERROR, message: "Cart not found" });
     }
-    const totalPrice = cart.items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+    const totalPrice = cart.items.reduce(
+      (acc, item) => acc + item.product.price * item.quantity,
+      0
+    );
     const newOrder = new Order({
       user: userId,
       items: cart.items.map((item) => ({
@@ -22,7 +25,7 @@ export const createOrder = asyncHandler(async (req, res) => {
       totalPrice,
       paymentStatus,
       orderStatus: "processing",
-      address
+      address,
     });
     await newOrder.save();
     await Cart.findOneAndDelete({ user: userId });
@@ -36,10 +39,18 @@ export const createOrder = asyncHandler(async (req, res) => {
 });
 export const getUserOrders = asyncHandler(async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user.id }).populate("items.product");
+    const orders = await Order.find({ user: req.user.id }).populate(
+      "items.product"
+    );
     res.status(200).json({ status: SUCCESS, data: orders });
   } catch (error) {
-    res.status(500).json({ status: ERROR, message: "An error occurred", error: error.message });
+    res
+      .status(500)
+      .json({
+        status: ERROR,
+        message: "An error occurred",
+        error: error.message,
+      });
   }
 });
 
@@ -50,14 +61,20 @@ export const getAllOrders = asyncHandler(async (req, res) => {
       .populate("items.product");
     res.status(200).json({ status: SUCCESS, data: orders });
   } catch (error) {
-    res.status(500).json({ status: ERROR, message: "An error occurred", error: error.message });
+    res
+      .status(500)
+      .json({
+        status: ERROR,
+        message: "An error occurred",
+        error: error.message,
+      });
   }
 });
 export const updateOrderStatus = asyncHandler(async (req, res) => {
   try {
     const { orderId, status } = req.body;
     const userId = req.user?.id;
-    const statuses = ["processing", "shipped", "delivered" , "cancelled"];
+    const statuses = ["processing", "shipped", "delivered", "cancelled"];
     if (!statuses.includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
     }
@@ -68,7 +85,6 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     order.status = status;
     await order.save();
 
-
     const notificationMessage = `Your order status has been updated to: ${status}`;
     const notification = new Notification({
       user: userId,
@@ -76,26 +92,29 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     });
     await notification.save();
 
-
     res.status(200).json({ message: "Order status updated successfully" });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error: error.message });
+    res
+      .status(500)
+      .json({ message: "An error occurred", error: error.message });
   }
 });
 export const updateProductSales = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
-  try{
+  try {
     const order = await Order.findById(orderId).populate("items.product");
-    if(!order){
+    if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-    for(const item of order.items){
-      await Product.findByIdAndUpdate(item.product, { 
-        $inc: { sold: item.quantity } 
+    for (const item of order.items) {
+      await Product.findByIdAndUpdate(item.product, {
+        $inc: { sold: item.quantity },
       });
     }
-  }catch(error){
+  } catch (error) {
     console.log(error.message);
-    res.status(500).json({ message: "An error occurred", error: error.message });
+    res
+      .status(500)
+      .json({ message: "An error occurred", error: error.message });
   }
-}); 
+});

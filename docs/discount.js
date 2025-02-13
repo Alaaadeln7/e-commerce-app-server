@@ -45,7 +45,7 @@
  *         description: Not authorized
  *       403:
  *         description: Admin access required
- * 
+ *
  *   post:
  *     summary: Create a new discount code
  *     security:
@@ -64,7 +64,7 @@
  *         description: Not authorized
  *       403:
  *         description: Admin access required
- * 
+ *
  * /discounts/validate:
  *   post:
  *     summary: Validate a discount code
@@ -89,7 +89,7 @@
  *         description: Invalid discount code
  *       401:
  *         description: Not authorized
- * 
+ *
  * /discounts/use:
  *   post:
  *     summary: Use a discount code
@@ -114,7 +114,7 @@
  *         description: Invalid or expired discount code
  *       401:
  *         description: Not authorized
- * 
+ *
  * /discounts/{discountId}:
  *   delete:
  *     summary: Delete a discount code

@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import { COOKIE_OPTIONS } from '../config/constants.js';
+import jwt from "jsonwebtoken";
+import { COOKIE_OPTIONS } from "../config/constants.js";
 
 /**
  * Generate JWT token and set it in HTTP-only cookie
@@ -10,21 +10,17 @@ import { COOKIE_OPTIONS } from '../config/constants.js';
 const generateToken = (userId, res) => {
   try {
     // Generate token
-    const token = jwt.sign(
-      { userId },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '7d',
-        algorithm: 'HS256'
-      }
-    );
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+      algorithm: "HS256",
+    });
 
-    res.cookie('jwt', token, COOKIE_OPTIONS);
+    res.cookie("jwt", token, COOKIE_OPTIONS);
 
     return token;
   } catch (error) {
-    console.error('Token generation error:', error);
-    throw new Error('Error generating authentication token');
+    console.error("Token generation error:", error);
+    throw new Error("Error generating authentication token");
   }
 };
 
