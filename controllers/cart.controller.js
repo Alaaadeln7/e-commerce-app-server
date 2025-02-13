@@ -36,13 +36,24 @@ export const addToCart = asyncHandler(async (req, res) => {
 });
 
 export const getCart = asyncHandler(async (req, res) => {
-  const cart = await Cart.findOne({ user: req.user._id }).populate(
-    "items.product"
-  );
-  if (!cart) {
-    return res.status(404).json({ status: FAILED, message: "Cart not found" });
+  const userId = req.user._id;
+  if (!req.user || !req.user._id) {
+    return res.status(401).json({ status: "FAILED", message: "Unauthorized" });
   }
-  res.status(200).json({ status: SUCCESS, data: cart });
+  try {
+    const cart = await Cart.findOne({ user: userId })
+      .populate("items.product")
+      .lean();
+    if (!cart) {
+      const newCart = new Cart({ user: userId, items: [] });
+      await newCart.save();
+      return res.status(201).json({ status: SUCCESS, data: newCart });
+    }
+    res.status(200).json({ status: SUCCESS, data: cart });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ status: FAILED, message: "Internal Server Error" });
+  }
 });
 
 export const updateCart = asyncHandler(async (req, res) => {
