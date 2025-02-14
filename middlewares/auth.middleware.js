@@ -9,9 +9,6 @@ export const isAdmin = asyncHandler(async (req, res, next) => {
   if (req.user.role !== ROLES.ADMIN) {
     throw new AppError("Admin access required", 403);
   }
-  // const admins = await Admin.find();
-
-  // if()
   next();
 });
 

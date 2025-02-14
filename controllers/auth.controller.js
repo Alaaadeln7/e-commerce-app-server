@@ -7,7 +7,7 @@ import {
   signUpValidationSchema,
   loginValidationSchema,
 } from "../utils/validationAuth.js";
-import { SUCCESS } from "../config/statusText.js";
+import { ERROR, SUCCESS } from "../config/statusText.js";
 const hashPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
   return bcrypt.hash(password, salt);
@@ -129,14 +129,13 @@ export const updateCredentials = asyncHandler(async (req, res) => {
   });
 });
 
-export const checkAuth = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).select("-password -__v");
-  if (!user) {
-    throw new AppError("User not found", 404);
+export const checkAuth = asyncHandler((req, res) => {
+  try {
+    return res.status(200).json(req.user);
+  } catch (error) {
+    console.error(error.message);
+    return res
+      .status(500)
+      .json({ status: ERROR, message: "Internal Server Error" });
   }
-
-  res.status(200).json({
-    status: SUCCESS,
-    data: user,
-  });
 });

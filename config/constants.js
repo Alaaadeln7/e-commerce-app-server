@@ -18,22 +18,20 @@ export const PAYMENT_STATUS = {
 };
 
 export const COOKIE_OPTIONS = {
+  maxAge: 7 * 60 * 60 * 60 * 1000,
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  sameSite: "strict",
+  secure: process.env.NODE_ENV !== "development",
 };
 
 export const CORS_OPTIONS = {
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  origin: "http://localhost:5173",
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 export const RATE_LIMIT_OPTIONS = {
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
 };
 
 export const SWAGGER_OPTIONS = {
