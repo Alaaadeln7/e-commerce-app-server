@@ -7,14 +7,7 @@ import {
   signUpValidationSchema,
   loginValidationSchema,
 } from "../utils/validationAuth.js";
-import { ERROR, FAILED, SUCCESS } from "../config/statusText.js";
-import { ROLES } from "../config/constants.js";
-
-// Helper functions
-const validateRole = (role) => {
-  return Object.values(ROLES).includes(role);
-};
-
+import { SUCCESS } from "../config/statusText.js";
 const hashPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
   return bcrypt.hash(password, salt);
@@ -25,7 +18,7 @@ const comparePasswords = async (inputPassword, hashedPassword) => {
 };
 
 export const register = asyncHandler(async (req, res) => {
-  const { fullName, email, password, role } = req.body;
+  const { fullName, email, password } = req.body;
 
   if (!req.body) {
     throw new AppError("No data provided", 400);
@@ -38,16 +31,11 @@ export const register = asyncHandler(async (req, res) => {
     throw new AppError("User already exists", 400);
   }
 
-  if (!validateRole(role)) {
-    throw new AppError("Invalid role", 400);
-  }
-
   const hashedPassword = await hashPassword(password);
   const newUser = await User.create({
     fullName,
     email,
     password: hashedPassword,
-    role,
   });
   const user = await User.findById(newUser._id).select("-password -__v");
   generateToken(user._id, res);
