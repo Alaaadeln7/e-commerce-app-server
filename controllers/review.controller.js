@@ -10,38 +10,37 @@ const calculateAverageRating = async (productId) => {
 };
 
 export const addReview = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
   try {
     const { productId, rating, reviewText } = req.body;
-    const userId = req.user?.id;
-
     const existingReview = await Review.findOne({
       product: productId,
       user: userId,
     });
     if (existingReview) {
-      return res
-        .status(400)
-        .json({
-          status: ERROR,
-          message: "You have already reviewed this product",
-        });
+      return res.status(400).json({
+        status: ERROR,
+        message: "You have already reviewed this product",
+      });
     }
 
     const newReview = new Review({
-      product: productId,
+      productId,
       user: userId,
       rating,
       reviewText,
     });
-    await newReview.save();
 
-    const product = await Product.findById(productId);
-    product.averageRating = await calculateAverageRating(productId);
-    await product.save();
+    if (newReview) {
+      await newReview.save();
+      const product = await Product.findById(productId);
+      product.averageRating = await calculateAverageRating(productId);
+      await product.save();
 
-    res
-      .status(201)
-      .json({ status: SUCCESS, message: "Review added successfully" });
+      res
+        .status(201)
+        .json({ status: SUCCESS, message: "Review added successfully" });
+    }
   } catch (error) {
     res
       .status(500)
@@ -52,17 +51,15 @@ export const addReview = asyncHandler(async (req, res) => {
 export const getReviews = asyncHandler(async (req, res) => {
   try {
     const { productId } = req.params;
-    const reviews = await Review.find({ product: productId }).populate(
+    const reviews = await Review.find({ productId }).populate(
       "user",
-      "name email"
+      "fullName avatar"
     );
-    res
-      .status(200)
-      .json({
-        status: SUCCESS,
-        message: "Reviews fetched successfully",
-        data: reviews,
-      });
+    res.status(200).json({
+      status: SUCCESS,
+      message: "Reviews fetched successfully",
+      data: reviews,
+    });
   } catch (error) {
     console.error(error.message);
     res

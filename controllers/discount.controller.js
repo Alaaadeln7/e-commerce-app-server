@@ -4,7 +4,7 @@ import { asyncHandler } from "../middlewares/error.middleware.js";
 
 export const createDiscount = asyncHandler(async (req, res) => {
   try {
-    const { code, discountPercentage, expiryDate, productId } = req.body;
+    const { code, discountPercentage, expiryDate } = req.body;
 
     const existingDiscount = await Discount.findOne({ code });
     if (existingDiscount) {
@@ -17,7 +17,6 @@ export const createDiscount = asyncHandler(async (req, res) => {
       code,
       discountPercentage,
       expiryDate,
-      productId,
     });
 
     await newDiscount.save();
@@ -31,43 +30,6 @@ export const createDiscount = asyncHandler(async (req, res) => {
     res.status(500).json({
       status: ERROR,
       message: "An error occurred while creating discount code",
-      error: error.message,
-    });
-  }
-});
-
-export const validateDiscount = asyncHandler(async (req, res) => {
-  try {
-    const { code, productId } = req.body;
-    const userId = req.user.id;
-
-    const discount = await Discount.findOne({ code });
-    if (!discount || discount.productId !== productId) {
-      return res
-        .status(404)
-        .json({ status: ERROR, message: "discount code is not found" });
-    }
-
-    if (discount.expiryDate < new Date()) {
-      return res
-        .status(400)
-        .json({ status: ERROR, message: "Discount code expired" });
-    }
-
-    if (discount.usedBy.includes(userId)) {
-      return res.status(400).json({
-        status: ERROR,
-        message: "You have already used this discount code",
-      });
-    }
-    discount.usedBy.push(userId);
-    await discount.save();
-    res
-      .status(200)
-      .json({ status: SUCCESS, message: "Discount code is valid", discount });
-  } catch (error) {
-    res.status(500).json({
-      message: "An error occurred while validating discount code",
       error: error.message,
     });
   }
@@ -116,6 +78,25 @@ export const getAllDiscounts = asyncHandler(async (req, res) => {
       status: ERROR,
       message: "An error occurred while getting all discount codes",
       error: error.message,
+    });
+  }
+});
+
+export const validateGenralDiscount = asyncHandler(async (req, res) => {
+  const { code } = req.body;
+  const discount = await Discount.findOne({ code });
+  if (discount) {
+    return res.status(200).json({
+      status: SUCCESS,
+      message: "Discount code is valid",
+      discountPercentage: discount.discountPercentage,
+      validtion: true,
+    });
+  } else {
+    return res.status(200).json({
+      status: ERROR,
+      message: "Discount code is not found",
+      validtion: false,
     });
   }
 });

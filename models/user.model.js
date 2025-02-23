@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { config } from "dotenv";
+config();
 const userSchema = new mongoose.Schema(
   {
     fullName: {
@@ -29,6 +31,22 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "approved", "rejected"],
       default: null,
+    },
+    city: {
+      type: String,
+      required: false,
+    },
+    area: {
+      type: String,
+      required: false,
+    },
+    street: {
+      type: String,
+      required: false,
+    },
+    phone: {
+      type: String,
+      required: false,
     },
   },
   { timestamps: true }

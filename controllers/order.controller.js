@@ -5,16 +5,16 @@ import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 export const createOrder = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
-  const { address, paymentStatus } = req.body;
+  const { city, area, street, paymentStatus, totalPrice, phoneNumber } =
+    req.body;
   try {
     const cart = await Cart.findOne({ user: userId }).populate("items.product");
     if (!cart || cart.items.length === 0) {
       return res.status(404).json({ status: ERROR, message: "Cart not found" });
     }
-    const totalPrice = cart.items.reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
-      0
-    );
+    const orderNumber = `${Math.floor(100 + Math.random() * 900)}-${Math.floor(
+      100 + Math.random() * 900
+    )}-${Math.floor(100 + Math.random() * 900)}`;
     const newOrder = new Order({
       user: userId,
       items: cart.items.map((item) => ({
@@ -25,7 +25,11 @@ export const createOrder = asyncHandler(async (req, res) => {
       totalPrice,
       paymentStatus,
       orderStatus: "processing",
-      address,
+      city,
+      area,
+      street,
+      phoneNumber,
+      orderNumber,
     });
     await newOrder.save();
     await Cart.findOneAndDelete({ user: userId });
@@ -44,13 +48,11 @@ export const getUserOrders = asyncHandler(async (req, res) => {
     );
     res.status(200).json({ status: SUCCESS, data: orders });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        status: ERROR,
-        message: "An error occurred",
-        error: error.message,
-      });
+    res.status(500).json({
+      status: ERROR,
+      message: "An error occurred",
+      error: error.message,
+    });
   }
 });
 
@@ -61,13 +63,11 @@ export const getAllOrders = asyncHandler(async (req, res) => {
       .populate("items.product");
     res.status(200).json({ status: SUCCESS, data: orders });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        status: ERROR,
-        message: "An error occurred",
-        error: error.message,
-      });
+    res.status(500).json({
+      status: ERROR,
+      message: "An error occurred",
+      error: error.message,
+    });
   }
 });
 export const updateOrderStatus = asyncHandler(async (req, res) => {

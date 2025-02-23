@@ -21,5 +21,6 @@ router.put(
 );
 router.get("/:productId", getProductById);
 router.get("/", getAllProducts);
+router.post("/addProduct", protectRoute, createProduct);
 router.get("/bestSellers", getBestSellers);
 export default router;

@@ -11,7 +11,6 @@ import connectionDB from "./config/db.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { CORS_OPTIONS, RATE_LIMIT_OPTIONS } from "./config/constants.js";
 import swaggerSpec from "./docs/swaggerDocs.js";
-import { app, server } from "./config/socket.js";
 
 import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/product.routes.js";
@@ -25,14 +24,17 @@ import notificationRoutes from "./routes/notification.routes.js";
 import reviewRoutes from "./routes/review.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 
+import { app, server } from "./config/socket.js";
+const port = process.env.PORT || 8080;
+
 app.use(helmet());
 app.use(cors(CORS_OPTIONS));
 app.use(rateLimit(RATE_LIMIT_OPTIONS));
 app.use(mongoSanitize());
 
 app.use(express.json({ limit: "10mb" }));
-app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(cookieParser());
 
 connectionDB();
 
@@ -60,7 +62,6 @@ app.use((req, res) => {
   });
 });
 
-const port = process.env.PORT || 8080;
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
   console.log(

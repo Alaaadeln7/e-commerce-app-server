@@ -1,10 +1,12 @@
 import express from "express";
 import {
   checkAuth,
+  completeInfo,
   login,
   logout,
   register,
-  updateCredentials,
+  resetPassword,
+  updateInfo,
   updateProfile,
 } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
@@ -16,6 +18,7 @@ router.post("/login", login);
 router.post("/logout", logout);
 router.put("/update-profile", protectRoute, updateProfile);
 router.get("/check", protectRoute, checkAuth);
-router.put("/update", protectRoute, updateCredentials);
-
+router.put("/update", protectRoute, updateInfo);
+router.put("/reset-password", protectRoute, resetPassword);
+router.put("/completeInfo", protectRoute, completeInfo);
 export default router;

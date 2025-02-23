@@ -4,7 +4,6 @@ const discountSchema = new mongoose.Schema({
   discountPercentage: Number,
   expiryDate: Date,
   usedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  productId: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
 });
 
 const Discount = mongoose.model("Discount", discountSchema);

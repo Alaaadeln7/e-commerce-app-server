@@ -4,8 +4,21 @@ import { asyncHandler } from "../middlewares/error.middleware.js";
 import cloudinary from "../config/cloudinary.js";
 export const getAllProducts = asyncHandler(async (req, res) => {
   try {
-    const products = await Product.find();
-    return res.status(200).json({ status: SUCCESS, data: products });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const totalProducts = await Product.countDocuments();
+    let products;
+    totalProducts <= 10
+      ? (products = await Product.find())
+      : (products = await Product.find().skip(skip).limit(limit));
+
+    return res.status(200).json({
+      status: SUCCESS,
+      data: products,
+      totalPages: Math.ceil(totalProducts / limit),
+      currentPage: page,
+    });
   } catch (error) {
     console.error(error.message);
     return res
@@ -34,7 +47,18 @@ export const getProductById = asyncHandler(async (req, res) => {
 });
 
 export const createProduct = asyncHandler(async (req, res) => {
-  const { title, description, price, category, stock, thumbnail } = req.body;
+  const {
+    title,
+    description,
+    price,
+    category,
+    stock,
+    thumbnail,
+    discount,
+    freeReturn,
+    freeShipping,
+    sizes,
+  } = req.body;
   const user = req.user;
   try {
     if (user?.role === "seller") {
@@ -54,6 +78,10 @@ export const createProduct = asyncHandler(async (req, res) => {
         stock,
         seller: user._id,
         thumbnail: thumbnailUrl,
+        discount,
+        freeReturn,
+        freeShipping,
+        sizes,
       });
 
       await newProduct.save();

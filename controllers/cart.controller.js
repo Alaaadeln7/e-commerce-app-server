@@ -6,14 +6,6 @@ import { asyncHandler } from "../middlewares/error.middleware.js";
 export const addToCart = asyncHandler(async (req, res) => {
   const { productId, quantity } = req.body;
   const user = req.user;
-
-  const product = await Product.findById(productId);
-  if (!product) {
-    return res
-      .status(404)
-      .json({ status: FAILED, message: "Product not found" });
-  }
-
   let cart = await Cart.findOne({ user: user._id });
   if (!cart) {
     cart = new Cart({
@@ -37,22 +29,25 @@ export const addToCart = asyncHandler(async (req, res) => {
 
 export const getCart = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  if (!req.user || !req.user._id) {
-    return res.status(401).json({ status: "FAILED", message: "Unauthorized" });
-  }
   try {
-    const cart = await Cart.findOne({ user: userId })
-      .populate("items.product")
-      .lean();
+    let cart = await Cart.findOne({ user: userId }).populate("items.product");
+
     if (!cart) {
-      const newCart = new Cart({ user: userId, items: [] });
-      await newCart.save();
-      return res.status(201).json({ status: SUCCESS, data: newCart });
+      cart = new Cart({ user: userId, items: [] });
+      await cart.save();
+      return res.status(201).json({ status: "SUCCESS", data: cart });
     }
-    res.status(200).json({ status: SUCCESS, data: cart });
+    const totalPrices = cart.items.reduce((acc, item) => {
+      return acc + (item.product?.price || 0) * item.quantity;
+    }, 0);
+    cart.totalPrice = totalPrices;
+    await cart.save();
+    res.status(200).json({ status: "SUCCESS", data: cart });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ status: FAILED, message: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ status: "FAILED", message: "Internal Server Error" });
   }
 });
 
@@ -84,7 +79,7 @@ export const deleteFromCart = asyncHandler(async (req, res) => {
   const { productId } = req.params;
   const user = req.user;
 
-  const cart = await Cart.findOne({ user: user._id });
+  const cart = await Cart.findOne({ user: user?._id });
   if (!cart) {
     return res.status(404).json({ status: FAILED, message: "Cart not found" });
   }
@@ -94,5 +89,5 @@ export const deleteFromCart = asyncHandler(async (req, res) => {
   );
   await cart.save();
 
-  res.status(200).json({ status: SUCCESS, data: cart });
+  res.status(200).json({ status: SUCCESS, message: "Item removed from cart" });
 });

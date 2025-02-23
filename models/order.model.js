@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import bcryptjs from "bcryptjs";
 const orderSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -9,11 +9,10 @@ const orderSchema = new mongoose.Schema(
         quantity: Number,
       },
     ],
-    shippingAddress: { type: String, required: true },
     totalPrice: { type: Number, required: true },
     paymentStatus: {
       type: String,
-      enum: ["pending", "paid", "failed"],
+      enum: ["pending", "paid", "failed", "cash"],
       default: "pending",
     },
     orderStatus: {
@@ -21,10 +20,13 @@ const orderSchema = new mongoose.Schema(
       enum: ["processing", "shipped", "delivered"],
       default: "processing",
     },
-    shippingDetails: {
-      carrier: { type: String }, // carrier name
-      trackingNumber: { type: String }, // tracking number
-      estimatedDeliveryDate: { type: Date }, //expected delivery date
+    city: { type: String, required: true },
+    area: { type: String, required: true },
+    street: { type: String, required: true },
+    orderNumber: {
+      type: String,
+      default: null,
+      required: true,
     },
   },
   { timestamps: true }
