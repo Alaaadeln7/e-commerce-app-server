@@ -26,12 +26,6 @@ const userSchema = new mongoose.Schema(
       enum: ["customer", "seller", "admin"],
       default: "customer",
     },
-    logo: String,
-    sellerRequestStatus: {
-      type: String,
-      enum: ["pending", "approved", "rejected"],
-      default: null,
-    },
     city: {
       type: String,
       required: false,

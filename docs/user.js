@@ -7,8 +7,7 @@
  *       required:
  *         - email
  *         - password
- *         - firstName
- *         - lastName
+ *         - fullName
  *       properties:
  *         id:
  *           type: string
@@ -21,12 +20,10 @@
  *           type: string
  *           format: password
  *           description: The user's password (hashed)
- *         firstName:
+ *         fullName:
  *           type: string
- *           description: The user's first name
- *         lastName:
- *           type: string
- *           description: The user's last name
+ *           description: The user's full name
+ *        
  *         role:
  *           type: string
  *           enum: [user, admin]
@@ -61,9 +58,6 @@
  *     LoginResponse:
  *       type: object
  *       properties:
- *         token:
- *           type: string
- *           description: JWT authentication token
  *         user:
  *           $ref: '#/components/schemas/User'
  */
@@ -83,8 +77,7 @@
  *             required:
  *               - email
  *               - password
- *               - firstName
- *               - lastName
+ *               - fullName
  *             properties:
  *               email:
  *                 type: string
@@ -93,9 +86,7 @@
  *                 type: string
  *                 format: password
  *                 minLength: 6
- *               firstName:
- *                 type: string
- *               lastName:
+ *               fullName:
  *                 type: string
  *               phoneNumber:
  *                 type: string

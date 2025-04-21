@@ -20,5 +20,5 @@ router.put("/update-profile", protectRoute, updateProfile);
 router.get("/check", protectRoute, checkAuth);
 router.put("/update", protectRoute, updateInfo);
 router.put("/reset-password", protectRoute, resetPassword);
-router.put("/completeInfo", protectRoute, completeInfo);
+router.put("/complete-info", protectRoute, completeInfo);
 export default router;

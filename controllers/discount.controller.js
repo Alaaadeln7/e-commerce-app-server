@@ -1,6 +1,7 @@
 import Discount from "../models/discount.model.js";
 import { SUCCESS, ERROR } from "../config/statusText.js";
 import { asyncHandler } from "../middlewares/error.middleware.js";
+import { now } from "mongoose";
 
 export const createDiscount = asyncHandler(async (req, res) => {
   try {
@@ -85,18 +86,20 @@ export const getAllDiscounts = asyncHandler(async (req, res) => {
 export const validateGenralDiscount = asyncHandler(async (req, res) => {
   const { code } = req.body;
   const discount = await Discount.findOne({ code });
-  if (discount) {
-    return res.status(200).json({
-      status: SUCCESS,
-      message: "Discount code is valid",
-      discountPercentage: discount.discountPercentage,
-      validtion: true,
-    });
-  } else {
-    return res.status(200).json({
-      status: ERROR,
-      message: "Discount code is not found",
-      validtion: false,
+
+  if (!discount || discount.expiryDate < new Date()) {
+    return res.status(400).json({
+      status: "error",
+      message: "Discount code is not valid",
+      validation: false,
+      discountPercentage: null,
     });
   }
+  console.log(discount);
+  return res.status(200).json({
+    status: SUCCESS,
+    message: "Discount code is valid",
+    validation: true,
+    discountPercentage: discount.discountPercentage,
+  });
 });

@@ -28,8 +28,8 @@ export const createCheckoutSession = asyncHandler(async (req, res) => {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: `http://localhost:5173/success?orderId=${orderId}`,
-      cancel_url: `http://localhost:5173/cancel`,
+      success_url: `http://localhost:5173/order-success`,
+      cancel_url: `http://localhost:5173/payment-cancelled`,
     });
 
     res.json({

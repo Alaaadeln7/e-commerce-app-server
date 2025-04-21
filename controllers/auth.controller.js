@@ -8,7 +8,6 @@ import {
   loginValidationSchema,
 } from "../utils/validationAuth.js";
 import { ERROR, SUCCESS, FAILED } from "../config/statusText.js";
-import Notification from "../models/notification.model.js";
 import cloudinary from "../config/cloudinary.js";
 
 export const register = asyncHandler(async (req, res) => {
@@ -33,12 +32,7 @@ export const register = asyncHandler(async (req, res) => {
       await newUser.save();
       const user = await User.findById(newUser._id).select("-__v");
       generateToken(user._id, res);
-      const notification = new Notification({
-        user: user._id,
-        message: "Welcome to our store",
-      });
-      await notification.save();
-      console.log("🔔 Notification Saved:", notification);
+
       return res.status(201).json({ status: SUCCESS, data: user });
     } else {
       return res
@@ -79,11 +73,7 @@ export const login = asyncHandler(async (req, res) => {
       });
     }
     generateToken(user._id, res);
-    const notification = new Notification({
-      user: user._id,
-      message: "Welcome back to our store",
-    });
-    await notification.save();
+
     return res.status(200).json({ status: SUCCESS, data: { user } });
   } catch (error) {
     console.error(error.message);
@@ -98,7 +88,7 @@ export const logout = asyncHandler(async (req, res) => {
     httpOnly: true,
     expires: new Date(0),
   });
-
+  res.clearCookie("jwt");
   res.status(200).json({
     status: SUCCESS,
     message: "Logged out successfully",
@@ -140,17 +130,21 @@ export const resetPassword = asyncHandler(async (req, res) => {
   }
   if (
     currentPassword &&
-    !(await comparePasswords(currentPassword, user.password))
+    !(await bcrypt.compare(currentPassword, user.password))
   ) {
     throw new AppError("Current password is incorrect", 401);
   }
 
   if (email) user.email = email;
-  if (newPassword) user.password = await hashPassword(newPassword);
+
+  if (newPassword) {
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+  }
 
   await user.save();
 
-  user.password = undefined;
+  // user.password = undefined;
 
   res.status(200).json({
     status: SUCCESS,
@@ -160,7 +154,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
 export const checkAuth = asyncHandler((req, res) => {
   try {
-    return res.status(200).json(req.user);
+    return res.status(200).json({ status: SUCCESS, data: req.user });
   } catch (error) {
     console.error(error.message);
     return res
