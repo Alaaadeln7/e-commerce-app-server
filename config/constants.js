@@ -27,7 +27,7 @@ export const COOKIE_OPTIONS = {
 export const CORS_OPTIONS = {
   origin:
     process.env.NODE_ENV !== "development"
-      ? "https://gymboyui.onrender.com"
+      ? "https://e-commerce-makeup-app.netlify.app"
       : "http://localhost:5173",
   credentials: true,
 };
